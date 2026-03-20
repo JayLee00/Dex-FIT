@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DexFIT: Force Informed Transfer for Dexterous Manipulation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0e11;
+      --bg2: #13151a;
+      --bg3: #1a1d24;
+      --border: rgba(255,255,255,0.08);
+      --accent: #4f9cf9;
+      --accent2: #7c6af7;
+      --accent3: #f97316;
+      --text: #e8eaf0;
+      --text-muted: #8a8fa8;
+      --text-dim: #545870;
+      --success: #22c55e;
+      --card-bg: rgba(255,255,255,0.03);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(13,14,17,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 58px;
+    }
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79,156,249,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,106,247,0.08) 0%, transparent 70%);
+      top: 30%; left: 30%;
+      pointer-events: none;
+    }
+
+    .venue-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(79,156,249,0.1);
+      border: 1px solid rgba(79,156,249,0.25);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease both;
+    }
+    .venue-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      line-height: 1.12;
+      max-width: 900px;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.7s ease 0.1s both;
+      background: linear-gradient(135deg, #e8eaf0 0%, #8a8fa8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      animation: fadeUp 0.7s ease 0.2s both;
+    }
+
+    .author-block {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      font-style: italic;
+      animation: fadeUp 0.7s ease 0.25s both;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s ease 0.3s both;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #0d0e11;
+    }
+    .btn-primary:hover { background: #70b2ff; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(79,156,249,0.3); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); transform: translateY(-2px); }
+    .btn-ghost {
+      background: rgba(124,106,247,0.12);
+      color: #a99cff;
+      border: 1px solid rgba(124,106,247,0.2);
+    }
+    .btn-ghost:hover { background: rgba(124,106,247,0.2); transform: translateY(-2px); }
+
+    /* ── TEASER IMAGE ── */
+    .teaser {
+      width: 100%;
+      max-width: 1000px;
+      margin: 3rem auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+    .teaser img {
+      width: 100%;
+      display: block;
+    }
+    .teaser-placeholder {
+      width: 100%;
+      aspect-ratio: 16/7;
+      background: var(--bg3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    .teaser-placeholder .icon { font-size: 2.5rem; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 6rem 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ── SECTION HEADERS ── */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+      color: var(--text);
+    }
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 640px;
+      font-size: 1rem;
+      font-weight: 300;
+      margin-bottom: 3rem;
+    }
+
+    /* ── ABSTRACT ── */
+    #abstract .abstract-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      font-weight: 300;
+    }
+
+    /* ── KEY METRICS ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .metric-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .metric-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-3px); }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .metric-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .metric-value span {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+    }
+    .metric-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .metric-delta {
+      font-size: 0.75rem;
+      color: var(--success);
+      margin-top: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── VIDEO SECTION ── */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+    .video-wrapper iframe,
+    .video-wrapper video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      color: var(--text-dim);
+    }
+    .video-placeholder .play-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(79,156,249,0.15);
+      border: 2px solid rgba(79,156,249,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .video-placeholder p { font-size: 0.9rem; }
+    .video-placeholder code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.06);
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      color: var(--accent);
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .video-card { }
+    .video-card-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .video-card-label .tag {
+      background: rgba(79,156,249,0.12);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .video-card-title {
+      font-weight: 500;
+      font-size: 1.05rem;
+      margin-bottom: 0.8rem;
+      color: var(--text);
+    }
+
+    /* ── HARDWARE SECTION ── */
+    .hardware-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .hardware-image {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+    }
+    .hardware-image img { width: 100%; display: block; }
+    .img-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    .img-placeholder .icon { font-size: 2rem; }
+    .img-caption {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 0.6rem;
+      font-style: italic;
+    }
+
+    .spec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .spec-item:last-child { border-bottom: none; }
+    .spec-key {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+    .spec-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .hw-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-top: 3rem;
+    }
+    .hw-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .hw-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hw-card-title .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: rgba(249,115,22,0.15);
+      color: var(--accent3);
+      border: 1px solid rgba(249,115,22,0.2);
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    /* ── PIPELINE DIAGRAM ── */
+    .pipeline-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── RESULTS TABLE ── */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    thead tr {
+      background: var(--bg3);
+    }
+    thead th {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.025); }
+    tbody tr.highlight { background: rgba(79,156,249,0.06); }
+    tbody tr.highlight:hover { background: rgba(79,156,249,0.1); }
+    td {
+      padding: 0.85rem 1.2rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    td:first-child { color: var(--text); font-weight: 500; }
+    .check { color: var(--success); }
+    .cross { color: #ef4444; }
+    .best {
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.83rem;
+    }
+    .ours-label {
+      background: linear-gradient(90deg, rgba(79,156,249,0.15), transparent);
+      padding: 0.2rem 0.6rem 0.2rem 0;
+      border-radius: 4px;
+    }
+
+    /* ── COMPARISON ── */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .comparison-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .comparison-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-3px); }
+    .comparison-card.featured {
+      border-color: rgba(79,156,249,0.4);
+      background: rgba(79,156,249,0.04);
+    }
+    .comp-label {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+    .comp-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    .comp-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      background: rgba(79,156,249,0.15);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      margin-bottom: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .comp-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── TACTILE SECTION ── */
+    .tactile-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1rem; }
+      .nav-links { display: none; }
+      .hardware-layout,
+      .video-grid,
+      .hw-cards,
+      .comparison-grid,
+      .tactile-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
+      section { padding: 4rem 0; }
+      .container { padding: 0 1.2rem; }
+    }
+
+    /* ── FLOW INDICATORS ── */
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.4rem;
+      padding: 0.5rem;
+    }
+    .pipeline-step {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .step-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(79,156,249,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .step-text { font-size: 0.88rem; }
+    .step-title { font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+    .step-desc { color: var(--text-muted); font-size: 0.8rem; font-weight: 300; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ NAV -->
+<nav>
+  <div class="nav-logo">DexFIT</div>
+  <ul class="nav-links">
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#hardware">Hardware</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#experiments">Experiments</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════════ HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+
+  <div class="venue-badge">
+    <span class="dot"></span>
+    IROS 2026 · Under Review
+  </div>
+
+  <h1>DexFIT: <em>Force Informed Transfer</em> for Dexterous Manipulation using Kinematically Isomorphic Tactile Glove</h1>
+
+  <p class="subtitle">
+    A wearable 16-DoF glove that transfers human contact forces to a robotic hand in real-time — eliminating retargeting while enabling force-aware imitation learning.
+  </p>
+
+  <p class="author-block">Anonymous Author(s) — Under Double-Blind Review</p>
+
+  <div class="btn-group">
+    <a href="paper.pdf" class="btn btn-primary">📄 Paper (PDF)</a>
+    <a href="https://github.com/JayLee00/Dex-FIT" class="btn btn-outline">💻 GitHub</a>
+    <a href="#demo" class="btn btn-ghost">▶ Watch Demo</a>
+  </div>
+
+  <!-- ★ TEASER IMAGE — 여기에 메인 시스템 사진 넣으세요 -->
+  <div class="teaser container" style="margin-top:3rem">
+    <!--
+      ★★★ 교체 방법 ★★★
+      아래 div를 지우고 이걸로 교체:
+      <img src="assets/teaser.png" alt="DexFIT system overview">
+    -->
+    <div class="teaser-placeholder">
+      <span class="icon">🖼️</span>
+      <strong>Teaser Figure</strong>
+      <p>assets/teaser.png 또는 teaser.jpg 파일을 넣으세요</p>
+      <code>&lt;img src="assets/teaser.png"&gt;</code>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ KEY METRICS -->
+<section id="abstract">
+  <div class="container">
+    <div class="metrics-grid" style="margin-bottom: 3rem;">
+      <div class="metric-card">
+        <div class="metric-value">100<span>%</span></div>
+        <div class="metric-label">Task Completion Rate</div>
+        <div class="metric-delta">↑ vs. 20% (position-only)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">34.5<span>%</span></div>
+        <div class="metric-label">Reduction in Task Time</div>
+        <div class="metric-delta">26.45s vs. 41.86s</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">16<span>%</span></div>
+        <div class="metric-label">Energy Reduction</div>
+        <div class="metric-delta">479.9 vs. 576.3 kJ</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">16<span>-DoF</span></div>
+        <div class="metric-label">Kinematically Isomorphic</div>
+        <div class="metric-delta">Zero retargeting error</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">21</div>
+        <div class="metric-label">Tactile Taxels (Glove)</div>
+        <div class="metric-delta">3 fingertips × 7 BMP384</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">&lt;50<span>ms</span></div>
+        <div class="metric-label">Tactile Response Time</div>
+        <div class="metric-delta">90 Hz sync with encoders</div>
+      </div>
+    </div>
+
+    <div class="section-label">Abstract</div>
+    <div class="abstract-box">
+      Acquiring high-quality demonstration data for dexterous robotic hand manipulation remains challenging because conventional methods either lose critical force information during collection or require complex, error-prone retargeting processes. We propose <strong>DexFIT</strong> (Dexterous Force-Informed Transfer), a system designed to transfer human contact forces to a robotic hand in real-time through a kinematically isomorphic wearable glove equipped with integrated fingertip tactile sensors. The glove's 16-DoF joint structure is mechanically identical to the target robot hand, thereby eliminating retargeting entirely. During data collection, a <strong>Force Generation (FG)</strong> module converts tactile readings from the operator's fingertips into supplementary joint angle commands. For autonomous deployment, an <strong>Adaptive Force Control (AFC)</strong> module monitors task progress via the robot's onboard tactile sensors and dynamically adjusts grasp forces. We train a vision-free Diffusion Policy on proprioceptive data and evaluate on a light bulb rotation task, achieving <strong>100% task completion</strong> with a 34.5% reduction in task time and 16% reduction in energy consumption.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ MAIN DEMO VIDEO -->
+<section id="demo">
+  <div class="container">
+    <div class="section-label">Overview Video</div>
+    <h2>System Overview</h2>
+    <p class="section-desc">
+      Full pipeline: human teleoperation with DexFIT glove → Force Generation during data collection → Diffusion Policy training → Autonomous deployment with Adaptive Force Control.
+    </p>
+
+    <!--
+      ★★★ 메인 영상 교체 방법 ★★★
+
+      [옵션 A] YouTube embed:
+      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" allowfullscreen></iframe>
+
+      [옵션 B] 로컬 mp4 파일:
+      <video controls autoplay muted loop>
+        <source src="assets/videos/overview.mp4" type="video/mp4">
+      </video>
+    -->
+    <div class="video-wrapper" style="margin-bottom: 3rem;">
+      <div class="video-placeholder">
+        <div class="play-icon">▶</div>
+        <p><strong>Main Overview Video</strong></p>
+        <p>YouTube embed 또는 로컬 mp4 파일</p>
+        <code>assets/videos/overview.mp4</code>
+      </div>
+    </div>
+
+    <!-- 4분할 영상 그리드 -->
+    <div class="section-label" style="margin-bottom:1rem">Demonstration Videos</div>
+    <div class="video-grid">
+
+      <!-- 영상 1 -->
+      <div class="video-card">
+        <div class="video-card-label">
+          <span class="tag">HARDWARE</span>
+          촉각 센서 실시간 데이터
+        </div>
+        <div class="video-card-title">Tactile Sensor Live Data Visualization</div>
+        <!--
+          ★ 교체: <video controls><source src="assets/videos/tactile_demo.mp4"></video>
+        -->
+        <div class="video-wrapper">
+          <div class="video-placeholder">
+            <div class="play-icon">▶</div>
+            <p>촉각 센서 7-taxel 실시간 출력</p>
+            <code>tactile_demo.mp4</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- 영상 2 -->
+      <div class="video-card">
+        <div class="video-card-label">
+          <span class="tag">HARDWARE</span>
+          관절 추종 성능
+        </div>
+        <div class="video-card-title">Joint Tracking Performance (16-DoF)</div>
+        <!--
+          ★ 교체: <video controls><source src="assets/videos/joint_tracking.mp4"></video>
+        -->
+        <div class="video-wrapper">
+          <div class="video-placeholder">
+            <div class="play-icon">▶</div>
+            <p>글러브 ↔ 로봇핸드 동기화</p>
+            <code>joint_tracking.mp4</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- 영상 3 -->
+      <div class="video-card">
+        <div class="video-card-label">
+          <span class="tag">DATA COLLECTION</span>
+          Force Generation 시연
+        </div>
+        <div class="video-card-title">Force Generation during Teleoperation</div>
+        <!--
+          ★ 교체: <video controls><source src="assets/videos/fg_teleop.mp4"></video>
+        -->
+        <div class="video-wrapper">
+          <div class="video-placeholder">
+            <div class="play-icon">▶</div>
+            <p>FG 활성화 vs 비활성화 비교</p>
+            <code>fg_teleop.mp4</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- 영상 4 -->
+      <div class="video-card">
+        <div class="video-card-label">
+          <span class="tag">DEPLOYMENT</span>
+          자율 전구 회전 태스크
+        </div>
+        <div class="video-card-title">Autonomous Light Bulb Rotation</div>
+        <!--
+          ★ 교체: <video controls><source src="assets/videos/autonomous_deploy.mp4"></video>
+        -->
+        <div class="video-wrapper">
+          <div class="video-placeholder">
+            <div class="play-icon">▶</div>
+            <p>DexFIT (FG+AFC) 100% 성공</p>
+            <code>autonomous_deploy.mp4</code>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /video-grid -->
+
+    <!-- 추가 비교 영상 (선택) -->
+    <div style="margin-top: 2rem;">
+      <div class="video-card-label" style="margin-bottom:0.6rem">
+        <span class="tag">ABLATION</span>
+        Ablation Study: 6가지 조건 비교
+      </div>
+      <div class="video-card-title" style="margin-bottom: 0.8rem">Failure Cases & Comparison</div>
+      <!--
+        ★ 교체: <video controls><source src="assets/videos/ablation_comparison.mp4"></video>
+      -->
+      <div class="video-wrapper" style="max-width: 700px;">
+        <div class="video-placeholder">
+          <div class="play-icon">▶</div>
+          <p>Teleoperation 실패 / Contact-only 실패 / DexFIT 성공 나란히 비교</p>
+          <code>ablation_comparison.mp4</code>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ HARDWARE -->
+<section id="hardware">
+  <div class="container">
+    <div class="section-label">Hardware</div>
+    <h2>System Design</h2>
+    <p class="section-desc">
+      A 16-DoF kinematically isomorphic glove paired with a multi-sensory robotic hand, connected via ROS 2 at 90 Hz.
+    </p>
+
+    <div class="hardware-layout">
+      <!-- 왼쪽: 시스템 사진 -->
+      <div>
+        <!--
+          ★ 교체: <img src="assets/hardware_overview.png" alt="DexFIT Hardware">
+        -->
+        <div class="hardware-image">
+          <div class="img-placeholder">
+            <span class="icon">🤖</span>
+            <strong>Hardware Overview Photo</strong>
+            <p>글러브 + 로봇핸드 전체 사진</p>
+            <code style="font-family:monospace;font-size:0.8rem;color:#4f9cf9">assets/hardware_overview.png</code>
+          </div>
+        </div>
+        <p class="img-caption">Fig. 2: DexFIT Glove (left) and Multi-Sensory Robotic Hand (right)</p>
+      </div>
+
+      <!-- 오른쪽: 스펙 -->
+      <div>
+        <div class="hw-cards">
+          <div class="hw-card">
+            <div class="hw-card-title">DexFIT Glove <span class="badge">WEARABLE</span></div>
+            <div class="spec-list">
+              <div class="spec-item">
+                <span class="spec-key">DoF</span>
+                <span class="spec-val">16-DoF</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Joint encoder</span>
+                <span class="spec-val">Potentiometer (RDC506018A)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">ADC resolution</span>
+                <span class="spec-val">12-bit (MCP3208)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Angle accuracy</span>
+                <span class="spec-val">RMSE = 2.59°</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Tactile sensors</span>
+                <span class="spec-val">21 taxels (3 fingers)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Tactile IC</span>
+                <span class="spec-val">BMP384 × 7 / finger</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Covering material</span>
+                <span class="spec-val">Ecoflex-50, 3 mm</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Update rate</span>
+                <span class="spec-val">90 Hz (SPI)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">MCU</span>
+                <span class="spec-val">ATmega2560</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Weight</span>
+                <span class="spec-val">~180 g</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-card-title">Robot Hand <span class="badge">MULTI-SENSORY</span></div>
+            <div class="spec-list">
+              <div class="spec-item">
+                <span class="spec-key">DoF</span>
+                <span class="spec-val">16-DoF</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Fingers</span>
+                <span class="spec-val">Thumb, Index, Middle, Ring</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Tactile sensors</span>
+                <span class="spec-val">60 taxels (15/finger)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Tactile range</span>
+                <span class="spec-val">1.5 N, sensitivity 1.5 mN</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Kinesthetic F/T</span>
+                <span class="spec-val">12 × 3-axis (3/finger)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Position sensor</span>
+                <span class="spec-val">Magnetic encoder × 16</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Communication</span>
+                <span class="spec-val">EtherCAT @ 1 kHz</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-key">Tactile rate</span>
+                <span class="spec-val">250 Hz</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /hardware-layout -->
+
+    <!-- 촉각센서 클로즈업 -->
+    <div style="margin-top: 4rem;">
+      <div class="section-label" style="margin-bottom:0.8rem">Tactile Sensor Detail</div>
+      <div class="tactile-grid">
+        <div>
+          <div class="video-card-title" style="margin-bottom: 1rem;">Fingertip Tactile Module — Live Response</div>
+          <!--
+            ★ 교체: <video controls loop><source src="assets/videos/tactile_matrix.mp4"></video>
+          -->
+          <div class="video-wrapper">
+            <div class="video-placeholder">
+              <div class="play-icon">▶</div>
+              <p>7-taxel 배열 실시간 히트맵 영상</p>
+              <p>손가락으로 누를 때 각 센서 반응 시각화</p>
+              <code>assets/videos/tactile_matrix.mp4</code>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="video-card-title" style="margin-bottom: 1rem;">Sensor Construction</div>
+          <!--
+            ★ 교체: <img src="assets/tactile_sensor.png" alt="Tactile sensor structure">
+          -->
+          <div class="hardware-image" style="margin-bottom: 1rem;">
+            <div class="img-placeholder" style="aspect-ratio: 4/3;">
+              <span class="icon">👆</span>
+              <p>촉각 센서 분해도 / 단면도</p>
+              <code style="font-size:0.75rem;color:#4f9cf9">assets/tactile_sensor.png</code>
+            </div>
+          </div>
+          <div class="spec-list">
+            <div class="spec-item">
+              <span class="spec-key">Sensing principle</span>
+              <span class="spec-val">Piezoresistive barometric</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-key">Cover material</span>
+              <span class="spec-val">Ecoflex-50, 3 mm</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-key">Taxel spacing</span>
+              <span class="spec-val">7 mm</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-key">Response time</span>
+              <span class="spec-val">&lt; 50 ms (47 ms measured)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-key">Force range</span>
+              <span class="spec-val">0 – 6.2 N</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-key">PCB type</span>
+              <span class="spec-val">Flexible PCB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ METHOD -->
+<section id="method">
+  <div class="container">
+    <div class="section-label">Method</div>
+    <h2>DexFIT Pipeline</h2>
+    <p class="section-desc">Two complementary force mechanisms bridging data collection and autonomous deployment.</p>
+
+    <!-- 파이프라인 이미지 -->
+    <div class="pipeline-box" style="margin-bottom: 2rem;">
+      <!--
+        ★ 교체: <img src="assets/pipeline.png" alt="DexFIT Pipeline" style="width:100%;border-radius:8px">
+      -->
+      <div class="img-placeholder" style="aspect-ratio: 16/5;">
+        <span class="icon">📊</span>
+        <p>논문 Fig. 5: 전체 파이프라인 다이어그램</p>
+        <code style="font-size:0.8rem;color:#4f9cf9">assets/pipeline.png</code>
+      </div>
+    </div>
+
+    <!-- 두 모듈 설명 -->
+    <div class="hw-cards">
+      <div class="hw-card">
+        <div class="hw-card-title">① Force Generation (FG) <span class="badge" style="background:rgba(79,156,249,0.15);color:#4f9cf9;border-color:rgba(79,156,249,0.2)">DATA COLLECTION</span></div>
+        <p style="font-size:0.88rem;color:var(--text-muted);line-height:1.7;font-weight:300;">
+          Operator wears DexFIT glove and physically manipulates the object. Fingertip tactile readings are converted to supplementary joint angle commands via: <br><br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;background:rgba(255,255,255,0.05);padding:0.5rem 0.8rem;border-radius:6px;display:block;color:var(--accent)">θ_cmd = θ_glove + K_j · (T_f / T_scale)</code><br>
+          Optimal gain K=30 selected via ATI Nano17 force reproduction experiment. 3-finger avg RMSE = 0.63 N, Pearson r &gt; 0.93.
+        </p>
+      </div>
+      <div class="hw-card">
+        <div class="hw-card-title">② Adaptive Force Control (AFC) <span class="badge" style="background:rgba(124,106,247,0.15);color:#a99cff;border-color:rgba(124,106,247,0.2)">DEPLOYMENT</span></div>
+        <p style="font-size:0.88rem;color:var(--text-muted);line-height:1.7;font-weight:300;">
+          At inference, the robot's onboard tactile sensors monitor contact. A velocity controller: <br><br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;background:rgba(255,255,255,0.05);padding:0.5rem 0.8rem;border-radius:6px;display:block;color:#a99cff">g_AFC = max(0, clip(10-ω,-10,10)/10 · G_max)</code><br>
+          When rotation stalls, DIP joints receive additional flexion. Adapts to increasing socket friction beyond 300° rotation.
+        </p>
+      </div>
+    </div>
+
+    <!-- Diffusion Policy 박스 -->
+    <div class="hw-card" style="margin-top: 1.5rem;">
+      <div class="hw-card-title">③ Vision-Free Diffusion Policy <span class="badge" style="background:rgba(249,115,22,0.15);color:#f97316;border-color:rgba(249,115,22,0.2)">POLICY</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+        <div>
+          <p style="font-size:0.88rem;color:var(--text-muted);line-height:1.7;font-weight:300;">
+            DDPM trained on proprioceptive data only — <strong>no camera</strong>. Observation: 16 joint positions + 12 kinesthetic + 4 binary tactile = R<sup>32</sup>. Action: 16-dim joint position targets.
+          </p>
+        </div>
+        <div class="spec-list">
+          <div class="spec-item"><span class="spec-key">Architecture</span><span class="spec-val">1D U-Net + FiLM</span></div>
+          <div class="spec-item"><span class="spec-key">Diffusion steps</span><span class="spec-val">T=100 (DDIM-10)</span></div>
+          <div class="spec-item"><span class="spec-key">Action chunking</span><span class="spec-val">T_obs=2, T_pred=16</span></div>
+          <div class="spec-item"><span class="spec-key">Training</span><span class="spec-val">600 epochs, Adam 1e-4</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ RESULTS -->
+<section id="results">
+  <div class="container">
+    <div class="section-label">Results</div>
+    <h2>Ablation Study</h2>
+    <p class="section-desc">
+      Light bulb rotation task: reach 300° cumulative rotation within 60 seconds. 5 trials per condition, 10 demonstrations each.
+    </p>
+
+    <!-- Table I: Data collection -->
+    <div style="margin-bottom: 2rem;">
+      <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;color:var(--text-muted);">Table I — Teleoperation Mode Comparison (Data Collection)</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Teleoperation Mode</th>
+              <th>Contact</th>
+              <th>FG</th>
+              <th>Success/Try</th>
+              <th>Avg. Success Time (s)</th>
+              <th>Avg. Angular Vel. (deg/s)</th>
+              <th>Relative Exec. Rate (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Teleoperation</td>
+              <td class="cross mono">✗</td>
+              <td class="cross mono">✗</td>
+              <td class="mono">10/21</td>
+              <td class="mono">33.35</td>
+              <td class="mono">12.83</td>
+              <td class="mono">—</td>
+            </tr>
+            <tr>
+              <td>Contact Teleoperation</td>
+              <td class="check mono">✓</td>
+              <td class="cross mono">✗</td>
+              <td class="mono">10/12</td>
+              <td class="mono">33.47</td>
+              <td class="mono">10.43</td>
+              <td class="mono">40.69</td>
+            </tr>
+            <tr class="highlight">
+              <td><strong class="ours-label">FG Teleoperation</strong></td>
+              <td class="check mono">✓</td>
+              <td class="check mono">✓</td>
+              <td class="best">10/13</td>
+              <td class="best">26.24</td>
+              <td class="best">15.07</td>
+              <td class="best">48.53</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Table II: Ablation -->
+    <div>
+      <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;color:var(--text-muted);">Table II — Ablation Study: Policy Deployment (5 trials each)</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Contact</th>
+              <th>FG</th>
+              <th>AFC</th>
+              <th>Success Rate (%)</th>
+              <th>Task Time (s)</th>
+              <th>Ang. Vel. (deg/s)</th>
+              <th>Max Rot. (deg)</th>
+              <th>Energy (kJ)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Teleop. (AFC off)</td>
+              <td class="cross mono">✗</td><td class="cross mono">✗</td><td class="cross mono">✗</td>
+              <td class="cross mono">0</td>
+              <td class="mono">—</td>
+              <td class="mono">1.186</td>
+              <td class="mono">318.73</td>
+              <td class="mono">—</td>
+            </tr>
+            <tr>
+              <td>Teleop. (AFC on)</td>
+              <td class="cross mono">✗</td><td class="cross mono">✗</td><td class="check mono">✓</td>
+              <td class="cross mono">0</td>
+              <td class="mono">—</td>
+              <td class="mono">3.881</td>
+              <td class="mono">49.87</td>
+              <td class="mono">—</td>
+            </tr>
+            <tr>
+              <td>Contact Teleop. (AFC off)</td>
+              <td class="check mono">✓</td><td class="cross mono">✗</td><td class="cross mono">✗</td>
+              <td class="mono">20</td>
+              <td class="mono">40.39</td>
+              <td class="mono">4.374</td>
+              <td class="mono">357.99</td>
+              <td class="mono">571.2</td>
+            </tr>
+            <tr>
+              <td>Contact Teleop. (AFC on)</td>
+              <td class="check mono">✓</td><td class="cross mono">✗</td><td class="check mono">✓</td>
+              <td class="mono">100</td>
+              <td class="mono">41.86</td>
+              <td class="mono">6.603</td>
+              <td class="mono">430.52</td>
+              <td class="mono">576.3</td>
+            </tr>
+            <tr>
+              <td>FG Teleop. (AFC off)</td>
+              <td class="check mono">✓</td><td class="check mono">✓</td><td class="cross mono">✗</td>
+              <td class="mono">100</td>
+              <td class="mono">31.48</td>
+              <td class="mono">7.366</td>
+              <td class="mono">447.35</td>
+              <td class="mono">543.9</td>
+            </tr>
+            <tr class="highlight">
+              <td><strong class="ours-label">DexFIT (Ours)</strong></td>
+              <td class="check mono">✓</td><td class="check mono">✓</td><td class="check mono">✓</td>
+              <td class="best">100</td>
+              <td class="best">26.45</td>
+              <td class="best">9.107</td>
+              <td class="mono">435.82</td>
+              <td class="best">479.9</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 스케일링 -->
+    <div class="hw-card" style="margin-top: 2rem;">
+      <div class="hw-card-title">Table III — Demonstration Scaling (40 demos vs 10 demos)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:0.5rem;">
+        <div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;">Completion Time</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--text);">24.22 <span style="font-size:0.75rem;color:var(--success)">s</span></div>
+          <div style="font-size:0.75rem;color:var(--success)">↓ from 26.45s</div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;">Angular Velocity</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--text);">11.342 <span style="font-size:0.75rem;color:var(--success)">deg/s</span></div>
+          <div style="font-size:0.75rem;color:var(--success)">↑ from 9.107 deg/s</div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;">Energy Consumption</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--text);">432.4 <span style="font-size:0.75rem;color:var(--success)">kJ</span></div>
+          <div style="font-size:0.75rem;color:var(--success)">↓ from 479.9 kJ</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ EXPERIMENT DETAILS -->
+<section id="experiments">
+  <div class="container">
+    <div class="section-label">Experiment Details</div>
+    <h2>Light Bulb Rotation Task</h2>
+    <p class="section-desc">
+      Contact-rich in-hand manipulation: rotate a bulb 300° against increasing socket friction. Vision-free, proprioception only.
+    </p>
+
+    <div class="hardware-layout" style="margin-bottom: 3rem;">
+      <div>
+        <!--
+          ★ 교체: <img src="assets/experiment_setup.png" alt="Experiment setup">
+        -->
+        <div class="hardware-image">
+          <div class="img-placeholder">
+            <span class="icon">🔬</span>
+            <p>실험 셋업 사진 (Fig. 7a)</p>
+            <p>로봇핸드 + 전구소켓 + 6축 F/T 센서</p>
+            <code style="font-size:0.75rem;color:#4f9cf9">assets/experiment_setup.png</code>
+          </div>
+        </div>
+        <p class="img-caption">Fig. 7(a): Experimental setup. RGB camera tracks bulb rotation; 6-axis F/T sensor logs applied forces.</p>
+      </div>
+      <div>
+        <!--
+          ★ 교체: <img src="assets/torque_plot.png" alt="Torque analysis">
+        -->
+        <div class="hardware-image">
+          <div class="img-placeholder">
+            <span class="icon">📈</span>
+            <p>Z-axis torque + 누적 회전각 그래프 (Fig. 7b)</p>
+            <p>300° 이후 AFC 개입 구간 명확히 표시</p>
+            <code style="font-size:0.75rem;color:#4f9cf9">assets/torque_plot.png</code>
+          </div>
+        </div>
+        <p class="img-caption">Fig. 7(b): Z-axis torque rises as socket tolerance tightens beyond 300°. AFC maintains rotation.</p>
+      </div>
+    </div>
+
+    <!-- 데이터 수집 스냅샷 -->
+    <div class="section-label" style="margin-bottom:0.8rem">Data Collection Snapshots</div>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;font-weight:300;">Three teleoperation modes side-by-side: free-space, contact-only, force generation.</p>
+    <!--
+      ★ 교체: <img src="assets/data_collection_snapshots.png" alt="Data collection" style="width:100%;border-radius:12px;border:1px solid var(--border)">
+    -->
+    <div class="hardware-image" style="margin-bottom:2rem">
+      <div class="img-placeholder" style="aspect-ratio:16/5;">
+        <span class="icon">📷</span>
+        <p>논문 Fig. 6: 3가지 텔레오퍼레이션 모드 스냅샷 비교 이미지</p>
+        <code style="font-size:0.8rem;color:#4f9cf9">assets/data_collection_snapshots.png</code>
+      </div>
+    </div>
+
+    <!-- 기존 방법론과 비교 -->
+    <div class="section-label" style="margin-bottom:0.8rem">Comparison with Related Work</div>
+    <div class="comparison-grid">
+      <div class="comparison-card">
+        <div class="comp-label">VISION-BASED</div>
+        <div class="comp-title">DexPilot / DexMV</div>
+        <div class="comp-desc">Stereo/monocular hand pose estimation. Suffers from severe occlusion at contact points — exactly where force matters most. No tactile information.</div>
+      </div>
+      <div class="comparison-card">
+        <div class="comp-label">ISOMORPHIC</div>
+        <div class="comp-title">DEXOP / DexUMI / KineDex</div>
+        <div class="comp-desc">Eliminates retargeting. However, force is either implicit and uncontrolled (DEXOP), absent (DexUMI), or applied only at deployment (KineDex).</div>
+      </div>
+      <div class="comparison-card featured">
+        <div class="comp-badge">OURS</div>
+        <div class="comp-label">FORCE-INFORMED</div>
+        <div class="comp-title">DexFIT</div>
+        <div class="comp-desc">Kinematically isomorphic <em>and</em> actively generates explicit, quantitative contact forces during data collection via wearable tactile sensors. First to close this gap.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FOOTER -->
+<footer>
+  <div class="container">
+    <p style="margin-bottom:0.5rem">
+      <strong style="color:var(--text)">DexFIT</strong> — IROS 2026 Submission (Under Double-Blind Review)
+    </p>
+    <p style="margin-bottom:1rem">
+      <a href="https://github.com/JayLee00/Dex-FIT">GitHub Repository</a>
+      &nbsp;·&nbsp;
+      <a href="paper.pdf">Paper PDF</a>
+    </p>
+    <p>
+      For video and media inquiries, please use the anonymous GitHub repository.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
