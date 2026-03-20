@@ -1,3 +1,16 @@
+## 🌐 Project Page
+
+**[https://project-robotics.github.io/DexFIT](https://project-robotics.github.io/DexFIT)**
+```
+
+---
+
+## 확인
+
+Pages 활성화 후 1~2분 기다리면
+```
+https://project-robotics.github.io/DexFIT
+
 <div align="center">
 
 <h1>DexFIT: Force Informed Transfer for Dexterous Manipulation<br>using Kinematically Isomorphic Tactile Glove</h1>
