@@ -72,8 +72,8 @@ We propose **DexFIT** (Dexterous Force-Informed Transfer), a system that transfe
 | Tactile | 21 taxels (3×7 BMP384) | 60 taxels (15/finger), 250 Hz |
 | Kinesthetic | — | 12 × 3-axis F/T, 300 Hz |
 | Update rate | 90 Hz (SPI) | EtherCAT @ 1 kHz |
-| MCU / Comm | ATmega2560 | EtherCAT |
-| Weight | ~180 g | — |
+| MCU / Comm | ATmega2560 | STM32 |
+| Weight | ~180 g | ~600 g |
 
 </div>
 
