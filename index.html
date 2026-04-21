@@ -52,27 +52,53 @@
     .cta {
       display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
-      padding: 0.85rem 1.8rem;
-      background: #1a56db;
+      gap: 0.7rem;
+      padding: 1.15rem 2.4rem;
+      background: linear-gradient(135deg, #1a56db 0%, #3b82f6 100%);
       color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 10px;
+      font-size: 1.12rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border-radius: 14px;
       border: none;
       text-decoration: none;
-      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 6px 18px rgba(26,86,219,0.25);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      box-shadow: 0 10px 26px rgba(26,86,219,0.32), 0 2px 6px rgba(26,86,219,0.18);
+      position: relative;
+      overflow: hidden;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    .cta::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.7s ease;
     }
     .cta:hover {
-      background: #1547b8;
-      transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(26,86,219,0.32);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 16px 34px rgba(26,86,219,0.40), 0 4px 10px rgba(26,86,219,0.22);
+      filter: brightness(1.05);
+      animation: none;
     }
+    .cta:hover::after { transform: translateX(100%); }
+    .cta:active { transform: translateY(0) scale(1.00); }
     .cta svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       fill: currentColor;
+    }
+    .cta-hint {
+      display: block;
+      margin-top: 0.7rem;
+      font-size: 0.82rem;
+      color: #6b7280;
+      letter-spacing: 0.02em;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 10px 26px rgba(26,86,219,0.32), 0 2px 6px rgba(26,86,219,0.18); }
+      50%      { box-shadow: 0 14px 32px rgba(26,86,219,0.44), 0 2px 10px rgba(26,86,219,0.26); }
     }
     .footnote {
       margin-top: 2rem;
@@ -94,11 +120,12 @@
     <p class="subtitle">Anonymous Author(s)</p>
 
     <a class="cta" href="https://project-robotics.github.io/DexFIT/" target="_blank" rel="noopener">
+      🚀&nbsp; Visit the Project Page
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/>
       </svg>
-      Project Page
     </a>
+    <span class="cta-hint">Overview · Hardware · Live demos · Ablation results</span>
 
     <p class="footnote">All author identities and institutional information are withheld in accordance with the IROS 2026 double-blind policy.</p>
   </div>
