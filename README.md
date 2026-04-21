@@ -1,19 +1,10 @@
 # DexFIT: Force Informed Transfer for Dexterous Manipulation using Kinematically Isomorphic Tactile Glove
 
-> 🔒 **This project is currently under double-blind review.**
-> Author information and supplementary materials (code, video, data) are withheld in accordance with the **IROS 2026** double-blind review policy. All content will be made public upon acceptance.
+[![Project Page](https://img.shields.io/badge/%F0%9F%8C%90%20Project%20Page-Visit-1a56db?style=for-the-badge)](https://project-robotics.github.io/DexFIT/)
 
----
-
-## 🌐 Project Page
-
-**[→ Visit the Project Page](https://project-robotics.github.io/DexFIT/)**
-
----
-
-|                         |                               |
-| ----------------------- | ----------------------------- |
-| **Venue**               | IROS 2026                     |
-| **Status**              | 🟡 Under Review               |
-| **Authors**             | Anonymous                     |
-| **Paper / Code / Data** | To be released upon acceptance |
+|            |                                |
+| ---------- | ------------------------------ |
+| **Venue**  | IROS 2026                      |
+| **Status** | 🟡 Under Review                |
+| **Paper**  | To be released                 |
+| **Code**   | To be released                 |
