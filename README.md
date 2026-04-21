@@ -3,9 +3,11 @@
 
 <p align="center"><em>IROS 2026 · Under Review</em></p>
 
+<br/>
+
 <p align="center">
   <a href="https://project-robotics.github.io/DexFIT/">
-    <img src="https://img.shields.io/badge/%F0%9F%8C%90-Project%20Page-333333?style=flat&labelColor=white&color=white" alt="Project Page" height="30" style="border: 1.5px solid #ccc; border-radius: 22px;"/>
+    <img src="https://img.shields.io/badge/%F0%9F%9A%80%20Visit%20the%20Project%20Page-1a56db?style=for-the-badge&labelColor=1a56db" height="48" alt="Project Page"/>
   </a>
 </p>
 
