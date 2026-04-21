@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DexFIT — Project Landing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: radial-gradient(ellipse at top, #f5f7ff 0%, #fff 70%);
+      color: #222;
+      font-family: 'Noto Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .card {
+      max-width: 720px;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 1.6rem;
+    }
+    h1 {
+      font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+    .subtitle {
+      font-size: 1rem;
+      color: #4b5563;
+      margin-bottom: 2.2rem;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.85rem 1.8rem;
+      background: #1a56db;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 18px rgba(26,86,219,0.25);
+    }
+    .cta:hover {
+      background: #1547b8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(26,86,219,0.32);
+    }
+    .cta svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+    .footnote {
+      margin-top: 2rem;
+      font-size: 0.82rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">IROS 2026 · Under Double-Blind Review</span>
+
+    <h1>
+      DexFIT: Force Informed Transfer<br>
+      for Dexterous Manipulation<br>
+      using Kinematically Isomorphic Tactile Glove
+    </h1>
+
+    <p class="subtitle">Anonymous Author(s)</p>
+
+    <a class="cta" href="https://project-robotics.github.io/DexFIT/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/>
+      </svg>
+      Project Page
+    </a>
+
+    <p class="footnote">All author identities and institutional information are withheld in accordance with the IROS 2026 double-blind policy.</p>
+  </div>
+</body>
+</html>
