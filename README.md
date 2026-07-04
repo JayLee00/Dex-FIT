@@ -1,7 +1,18 @@
 <h1 align="center">DexFIT</h1>
 <h3 align="center">Force Informed Transfer for Dexterous Manipulation<br/>using Kinematically Isomorphic Tactile Glove</h3>
 
-<p align="center"><em>IROS 2026 · Under Review</em></p>
+<p align="center">
+  <strong>Jaesung Lee</strong><sup>1,2</sup>,
+  <strong>Sungwoo Park</strong><sup>1,2</sup>,
+  <strong>Donghyun Hwang</strong><sup>2*</sup>
+</p>
+
+<p align="center">
+  <sup>1</sup> Korea University, Seoul, South Korea<br/>
+  <sup>2</sup> Center for Humanoid Research, KIST, Seoul, South Korea
+</p>
+
+<p align="center"><strong>✅ Accepted at IROS 2026</strong></p>
 
 <br/>
 
@@ -23,11 +34,11 @@
 
 <div align="center">
 
-|            |                 |
-| ---------- | --------------- |
-| **Venue**  | IROS 2026       |
-| **Status** | 🟡 Under Review |
-| **Paper**  | To be released  |
-| **Code**   | To be released  |
+|            |                                    |
+| ---------- | ---------------------------------- |
+| **Venue**  | IROS 2026                          |
+| **Status** | ✅ Accepted                        |
+| **Paper**  | To be released                     |
+| **Code**   | [Anonymous repo](https://anonymous.4open.science/r/DexFIT-478C/) |
 
 </div>
