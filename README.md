@@ -17,8 +17,8 @@
 <br/>
 
 <p align="center">
-  <a href="https://project-robotics.github.io/DexFIT/">
-    <img src="https://img.shields.io/badge/%F0%9F%9A%80%20Visit%20the%20Project%20Page-1a56db?style=for-the-badge&labelColor=1a56db" height="48" alt="Project Page"/>
+  <a href="https://jaylee00.github.io/Dex-FIT/">
+    <img src="https://img.shields.io/badge/%F0%9F%9A%80%20Project%20Page-jaylee00.github.io%2FDex--FIT-1a56db?style=for-the-badge&labelColor=1a56db" height="48" alt="Project Page"/>
   </a>
 </p>
 
@@ -27,18 +27,20 @@
 </p>
 
 <p align="center">
-  <a href="https://project-robotics.github.io/DexFIT/"><b>project-robotics.github.io/DexFIT</b></a>
+  <a href="https://jaylee00.github.io/Dex-FIT/"><b>jaylee00.github.io/Dex-FIT</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/JayLee00/Dex-FIT"><b>github.com/JayLee00/Dex-FIT</b></a>
 </p>
 
 <br/>
 
 <div align="center">
 
-|            |                                    |
-| ---------- | ---------------------------------- |
-| **Venue**  | IROS 2026                          |
-| **Status** | ✅ Accepted                        |
-| **Paper**  | To be released                     |
-| **Code**   | [Anonymous repo](https://anonymous.4open.science/r/DexFIT-478C/) |
+|            |                                      |
+| ---------- | ------------------------------------ |
+| **Venue**  | IROS 2026                            |
+| **Status** | ✅ Accepted                          |
+| **Paper**  | To be released                       |
+| **Code**   | [JayLee00/Dex-FIT](https://github.com/JayLee00/Dex-FIT) |
 
 </div>

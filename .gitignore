@@ -1,0 +1,6 @@
+# Unused local exports (not referenced by index.html)
+static/videos/Peek*
+static/gifs/fg_teleop.gif
+static/gifs/dexfit_deploy.gif
+static/gifs/contact_no_fg.gif
+static/gifs/fg_with_afc.gif
