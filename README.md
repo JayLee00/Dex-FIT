@@ -12,6 +12,12 @@
   <sup>2</sup> Center for Humanoid Research, KIST, Seoul, South Korea
 </p>
 
+<p align="center">
+  <a href="mailto:jay.lee@kist.re.kr">jay.lee@kist.re.kr</a>
+  ·
+  <a href="https://www.linkedin.com/in/jaesung-lee-00-jay-lee">LinkedIn</a>
+</p>
+
 <p align="center"><strong>✅ Accepted at IROS 2026</strong></p>
 
 <br/>
